@@ -4,15 +4,17 @@ const axios = require("axios");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 단어에서 한자만 추출 (한자 + 히라가나/카타카나 혼합 대응)
+// 한자만 추출
 function extractKanji(str) {
   return Array.from(str).filter((char) => char.match(/[\u4e00-\u9faf]/));
 }
 
+// 헬스 체크용 루트 라우터 (Render 감지용)
 app.get("/", (req, res) => {
   res.send("✅ dodotokanzi API is alive!");
 });
 
+// 핵심 API
 app.get("/word-info", async (req, res) => {
   const query = req.query.query;
   if (!query) return res.status(400).json({ error: "Missing 'query' parameter" });
@@ -37,7 +39,6 @@ app.get("/word-info", async (req, res) => {
     })
   );
 
-  // 단어 유래는 Jisho API에서 keywords를 통해 유사한 표현 추정
   let origin = "";
   try {
     const jishoRes = await axios.get(`https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(query)}`);
@@ -62,10 +63,7 @@ app.get("/word-info", async (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
-// 파일 맨 아래에 추가
+// ✅ 반드시 최상위에 있어야 함
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
