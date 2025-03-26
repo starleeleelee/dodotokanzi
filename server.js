@@ -1,7 +1,5 @@
 const express = require("express");
-const axios = require("axios");
 const app = express();
-
 const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
@@ -9,11 +7,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/word-info", (req, res) => {
-  const query = req.query.query || "없음";
+  const query = req.query.query || "알 수 없음";
+
   res.json({
     status: "✅ 정상 작동 확인됨",
     query,
-    example: query.split("")
+    example: query.split(""),
   });
 });
 
