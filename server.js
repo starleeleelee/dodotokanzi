@@ -8,10 +8,12 @@ app.get("/", (req, res) => {
 
 app.get("/word-info", (req, res) => {
   const query = req.query.query || "알 수 없음";
+
+  // ✅ 테스트용 응답
   res.json({
-    message: "✅ 외부 요청 없이 작동 확인됨",
+    status: "✅ 정상 작동 확인됨",
     query,
-    testKanji: ["自", "撮"]
+    example: query.split(""),
   });
 });
 
