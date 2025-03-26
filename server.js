@@ -65,3 +65,7 @@ app.get("/word-info", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+// 파일 맨 아래에 추가
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
