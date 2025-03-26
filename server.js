@@ -4,23 +4,29 @@ const axios = require("axios");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 한자만 추출
+// 입력된 문자열에서 한자만 뽑아내는 함수
 function extractKanji(str) {
   return Array.from(str).filter((char) => char.match(/[\u4e00-\u9faf]/));
 }
 
-// 헬스 체크용 루트 라우터 (Render 감지용)
+// 루트 라우터: 서버 살아 있는지 확인용
 app.get("/", (req, res) => {
   res.send("✅ dodotokanzi API is alive!");
 });
 
-// 핵심 API
+// 핵심 API: 단어 분석
 app.get("/word-info", async (req, res) => {
-  const query = req.query.query;
-  if (!query) return res.status(400).json({ error: "Missing 'query' parameter" });
+  // ✅ 자동 인코딩 처리
+  const raw = req.query.query || '';
+  const query = decodeURIComponent(raw);
+  if (!query.trim()) {
+    return res.status(400).json({ error: "Missing or invalid query" });
+  }
 
+  // 한자 리스트 뽑기
   const kanjiList = extractKanji(query);
 
+  // 각 한자에 대해 KanjiAPI 호출
   const kanjiResults = await Promise.all(
     kanjiList.map(async (char) => {
       try {
@@ -39,6 +45,7 @@ app.get("/word-info", async (req, res) => {
     })
   );
 
+  // 단어 유래 (Jisho.org에서 수집)
   let origin = "";
   try {
     const jishoRes = await axios.get(`https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(query)}`);
@@ -52,6 +59,7 @@ app.get("/word-info", async (req, res) => {
     origin = "(유래 정보 없음)";
   }
 
+  // 최종 응답 구조
   res.json({
     query,
     kanji: kanjiResults,
@@ -63,7 +71,7 @@ app.get("/word-info", async (req, res) => {
   });
 });
 
-// ✅ 반드시 최상위에 있어야 함
+// ✅ Render용 서버 실행
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
