@@ -8,14 +8,14 @@ app.get("/", (req, res) => {
 
 app.get("/word-info", (req, res) => {
   const query = req.query.query || "알 수 없음";
-
   res.json({
     status: "✅ 정상 작동 확인됨",
     query,
-    example: query.split(""),
+    queryLength: query.length,
+    chars: query.split(""),
   });
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Basic test server running on port ${PORT}`);
 });
