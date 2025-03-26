@@ -4,6 +4,7 @@ const axios = require("axios");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// 한자 추출 함수
 function extractKanji(str) {
   return Array.from(str).filter((char) => char.match(/[\u4e00-\u9faf]/));
 }
@@ -13,8 +14,17 @@ app.get("/", (req, res) => {
 });
 
 app.get("/word-info", async (req, res) => {
-  // ❗ decodeURIComponent 제거 (Express가 자동으로 디코딩함)
-  const query = req.query.query;
+  let query = req.query.query;
+
+  // ✅ fallback: 강제로 디코딩 (브라우저 요청도 커버)
+  try {
+    if (query) {
+      query = decodeURIComponent(query);
+    }
+  } catch (e) {
+    return res.status(400).json({ error: "Invalid encoding in query" });
+  }
+
   if (!query || !query.trim()) {
     return res.status(400).json({ error: "Missing or invalid query" });
   }
