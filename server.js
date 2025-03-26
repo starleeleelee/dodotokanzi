@@ -8,6 +8,10 @@ app.get("/", (req, res) => {
 
 app.get("/word-info", (req, res) => {
   const query = req.query.query || "알 수 없음";
+
+  console.log("👉 /word-info 요청 수신됨");
+  console.log("📦 query:", query);
+
   res.json({
     status: "✅ 정상 작동 확인됨",
     query,
