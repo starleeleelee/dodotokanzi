@@ -40,20 +40,9 @@ app.get("/word-info", async (req, res) => {
       })
     );
 
-    let origin = "";
-    try {
-      const jishoRes = await axios.get(`https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(query)}`);
-      const data = jishoRes.data.data?.[0];
-      if (data) {
-        origin = data.japanese[0].word || data.japanese[0].reading;
-      } else {
-        origin = "(유래 정보 없음)";
-      }
-    } catch (e) {
-      origin = "(유래 정보 없음)";
-    }
+    // ✅ jisho.org 요청 제거하고, origin을 가짜로 채움
+    const origin = "(유래 정보 없음 - jisho 연결 제거됨)";
 
-    // ✅ 성공 응답 보내기
     res.json({
       query,
       kanji: kanjiResults,
@@ -65,8 +54,7 @@ app.get("/word-info", async (req, res) => {
     });
 
   } catch (e) {
-    // ✅ 오류 발생 시에도 반드시 응답 보내기
-    console.error("서버 처리 중 오류:", e.message);
+    console.error("서버 오류 발생:", e.message);
     res.status(500).json({ error: "서버 내부 오류 발생", message: e.message });
   }
 });
